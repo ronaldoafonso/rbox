@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package gcommand;
+
+option go_package = "github.com/ronaldoafonso/rbox/gcommand";
+
+service RemoteCommand {
+    rpc Get(GetRequest) returns(ReturnMsg) {}
+    rpc Set(SetRequest) returns(ReturnMsg) {}
+}
+
+message GetRequest {
+    string Boxname = 1;
+    string Field = 2;
+}
+
+message SetRequest {
+    string Boxname = 1;
+    string Field = 2;
+    string Value = 3;
+}
+
+message ReturnMsg {
+    string returnMsg = 1;
+}
