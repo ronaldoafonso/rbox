@@ -16,29 +16,44 @@ func main() {
 	defer conn.Close()
 
 	c := pb.NewRemoteCommandClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
 
 	// Get
-	getSSID := &pb.GetRequest{
-		Boxname: "boxname",
-		Field:   "ssid",
-	}
-	if retMessage, err := c.Get(ctx, getSSID); err != nil {
-		log.Fatalf("could not get SSID: %v.", err)
-	} else {
-		log.Printf("Get SSID: %v.", retMessage.GetReturnMsg())
+	for _, field := range []string{"ssid", "macs"} {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		data := &pb.GetRequest{
+			Boxname: "788a20298f81.z3n.com.br",
+			Field:   field,
+		}
+		if retMessage, err := c.Get(ctx, data); err != nil {
+			log.Fatalf("could not get %v: %v.", field, err)
+		} else {
+			log.Printf("Get %v: %v.", field, retMessage.GetReturnMsg())
+		}
 	}
 
 	// Set
-	setSSID := &pb.SetRequest{
-		Boxname: "boxname",
-		Field:   "ssid",
-		Value:   "z3n",
+	data := []struct {
+		field string
+		value string
+	}{
+		{"ssid", "afonso ronaldo afonso"},
+		{"macs", "11:11:11:11:11:11 22:22:22:22:22:22 33:33:33:33:33:33"},
 	}
-	if retMessage, err := c.Set(ctx, setSSID); err != nil {
-		log.Fatalf("could not set SSID: %v.", err)
-	} else {
-		log.Printf("Set SSID: %v.", retMessage.GetReturnMsg())
+	for _, d := range data {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		sdata := &pb.SetRequest{
+			Boxname: "788a20298f81.z3n.com.br",
+			Field:   d.field,
+			Value:   d.value,
+		}
+		if retMessage, err := c.Set(ctx, sdata); err != nil {
+			log.Fatalf("could not set %v->%v: %v.", d.field, d.value, err)
+		} else {
+			log.Printf("Set %v->%v: %v.", d.field, d.value, retMessage.GetReturnMsg())
+		}
 	}
 }
