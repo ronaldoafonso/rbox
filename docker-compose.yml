@@ -1,0 +1,27 @@
+---
+version: '3.7'
+
+services:
+  rbox:
+    build:
+      context: .
+    image: rbox:0.0.1
+    volumes:
+      - type: bind
+        source: .
+        target: /go/src/github.com/ronaldoafonso/rbox
+      - type: bind
+        source: ./rbox/uci
+        target: /home/rbox/uci
+      - type: bind
+        source: ./.ssh
+        target: /home/rbox/.ssh
+    networks:
+      - rbox-external-net
+    ports:
+      - "50051:50051"
+
+networks:
+  rbox-external-net:
+    name: rbox-external-net
+...

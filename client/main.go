@@ -19,7 +19,7 @@ func main() {
 
 	// Get
 	for _, field := range []string{"ssid", "macs"} {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 
 		data := &pb.GetRequest{
@@ -38,7 +38,7 @@ func main() {
 		field string
 		value string
 	}{
-		{"ssid", "afonso ronaldo afonso"},
+		{"ssid", "z3n"},
 		{"macs", "11:11:11:11:11:11 22:22:22:22:22:22 33:33:33:33:33:33"},
 	}
 	for _, d := range data {

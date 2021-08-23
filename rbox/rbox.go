@@ -50,7 +50,7 @@ func (b *RemoteBox) GetSSIDs() ([]string, error) {
 
 func (b *RemoteBox) SetSSIDs(SSID string) error {
 	scp := []string{
-		"./uci/set_ssid.sh",
+		"/home/rbox/uci/set_ssid.sh",
 		b.boxname + ":/tmp",
 	}
 	_, err := exec.Command("scp", scp...).Output()
@@ -79,7 +79,7 @@ func (b *RemoteBox) GetMACs() ([]string, error) {
 
 func (b *RemoteBox) SetMACs(MACs string) error {
 	scp := []string{
-		"./uci/set_ipset_macs.sh",
+		"/home/rbox/uci/set_ipset_macs.sh",
 		b.boxname + ":/tmp",
 	}
 	_, err := exec.Command("scp", scp...).Output()
