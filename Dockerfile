@@ -8,7 +8,7 @@ WORKDIR /go/src/github.com/ronaldoafonso/rbox
 
 USER rbox:rbox
 
-COPY . .
+COPY --chown=rbox:rbox . .
 
 RUN go get -d -v ./...
 

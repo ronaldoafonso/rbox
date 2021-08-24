@@ -37,7 +37,7 @@ func (s *server) Get(c context.Context, r *pb.GetRequest) (*pb.ReturnMsg, error)
 
 func (s *server) Set(c context.Context, r *pb.SetRequest) (*pb.ReturnMsg, error) {
 	b := rbox.NewRBox(r.GetBoxname())
-	returnMsg := "OK: "
+	returnMsg := "OK"
 
 	switch r.GetField() {
 	case "ssid":
