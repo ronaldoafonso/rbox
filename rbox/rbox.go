@@ -1,7 +1,6 @@
 package rbox
 
 import (
-	"os"
 	"os/exec"
 	"strings"
 )
@@ -10,23 +9,13 @@ type RemoteBox struct {
 	boxname string
 }
 
-func (b *RemoteBox) GetConfig() error {
+func (b *RemoteBox) GetConfig() ([]byte, error) {
 	cmd := exec.Command("ssh", b.boxname, "uci show")
 	config, err := cmd.Output()
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	file, err := os.Create(b.boxname)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	if _, err := file.Write(config); err != nil {
-		return err
-	}
-	return nil
+	return config, nil
 }
 
 func (b *RemoteBox) GetSSIDs() ([]string, error) {
@@ -40,7 +29,7 @@ func (b *RemoteBox) GetSSIDs() ([]string, error) {
 		cmd := exec.Command("ssh", b.boxname, command)
 		SSID, err := cmd.Output()
 		if err != nil {
-			return []string{}, err
+			return nil, err
 		}
 		SSIDs = append(SSIDs, strings.TrimSpace(string(SSID)))
 	}
@@ -71,7 +60,7 @@ func (b *RemoteBox) GetMACs() ([]string, error) {
 	cmd := exec.Command("ssh", b.boxname, "uci get firewall.macs.entry")
 	cmdMACs, err := cmd.Output()
 	if err != nil {
-		return []string{}, err
+		return nil, err
 	}
 	MACs := strings.Split(strings.Trim(string(cmdMACs), "\n"), " ")
 	return MACs, nil

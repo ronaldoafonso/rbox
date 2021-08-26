@@ -40,18 +40,22 @@ func TestRBoxSetSSID(t *testing.T) {
 }
 
 func TestRBoxGetSSIDs(t *testing.T) {
-	boxname := "788a20298f81.z3n.com.br"
-	b := NewRBox(boxname)
-
-	SSIDs, err := b.GetSSIDs()
-	if err != nil {
+	bnameOK := "788a20298f81.z3n.com.br"
+	b1 := NewRBox(bnameOK)
+	if SSIDs, err := b1.GetSSIDs(); err != nil {
 		t.Fatalf("Error getting SSIDs: %v.", err)
+	} else {
+		for _, SSID := range SSIDs {
+			if SSID != "z3n" {
+				t.Fatalf("Error GetSSIDs. Want: z3n, got: '%v'.", SSID)
+			}
+		}
 	}
 
-	for _, SSID := range SSIDs {
-		if SSID != "z3n" {
-			t.Fatalf("Error getting SSID. Want: z3n, got: '%v'.", SSID)
-		}
+	bnameNotOK := "notok.z3n.com.br"
+	b2 := NewRBox(bnameNotOK)
+	if SSIDs, err := b2.GetSSIDs(); SSIDs != nil && err == nil {
+		t.Fatal("GetSSIDs should return 'nil' and an error.")
 	}
 }
 
@@ -81,10 +85,10 @@ func TestRBoxSetMACs(t *testing.T) {
 }
 
 func TestRBoxGetMACs(t *testing.T) {
-	boxname := "788a20298f81.z3n.com.br"
-	b := NewRBox(boxname)
+	bnameOK := "788a20298f81.z3n.com.br"
+	b1 := NewRBox(bnameOK)
 
-	MACs, err := b.GetMACs()
+	MACs, err := b1.GetMACs()
 	if err != nil {
 		t.Fatalf("Error getting MACs: %v.", err)
 	}
@@ -99,33 +103,35 @@ func TestRBoxGetMACs(t *testing.T) {
 			t.Fatalf("Error getting MAC. Want: %v, got: %v.", want[i], MAC)
 		}
 	}
+
+	bnameNotOK := "notok.z3n.com.br"
+	b2 := NewRBox(bnameNotOK)
+	if MACs, err := b2.GetMACs(); MACs != nil && err == nil {
+		t.Fatal("GetMACs should return 'nil' and an error.")
+	}
 }
 
 func TestRBoxGetConfig(t *testing.T) {
-	boxname := "788a20298f81.z3n.com.br"
-	b := NewRBox(boxname)
-	err := b.GetConfig()
-	if err != nil {
-		t.Fatalf("Error getting config for %v.", boxname)
-	}
-
-	f1, err := ioutil.ReadFile("./uci_show")
+	wantConfig, err := ioutil.ReadFile("./uci_show")
 	if err != nil {
 		t.Fatalf("Error reading uci_show: %v.", err)
 	}
 
-	f2, err := ioutil.ReadFile(boxname)
-	if err != nil {
-		t.Fatalf("Error reading %v: %v.", boxname, err)
-	}
-
-	if len(f1) != len(f2) {
-		t.Fatal("Error config files are not the same size.")
-	}
-
-	for index, data := range f1 {
-		if data != f2[index] {
-			t.Fatal("Error: files are different.")
+	bnameOK := "788a20298f81.z3n.com.br"
+	b1 := NewRBox(bnameOK)
+	if config, err := b1.GetConfig(); err != nil {
+		t.Fatalf("Error getting config for %v: %v.", bnameOK, err)
+	} else {
+		for i, data := range config {
+			if data != wantConfig[i] {
+				t.Fatalf("Content error. Want %v, got %v.", wantConfig[i], data)
+			}
 		}
+	}
+
+	bnameNotOK := "notok.z3n.com.br"
+	b2 := NewRBox(bnameNotOK)
+	if config, err := b2.GetConfig(); config != nil && err == nil {
+		t.Fatal("GetConfig should return 'nil' and an error.")
 	}
 }
