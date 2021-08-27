@@ -6,6 +6,16 @@ services:
     build:
       context: .
     image: rbox:0.0.1
+    networks:
+      - rbox-external-net
+    ports:
+      - "50051:50051"
+
+  rbox-dev:
+    build:
+      context: .
+      target: devel
+    image: rbox:0.0.1
     volumes:
       - type: bind
         source: .
@@ -20,6 +30,7 @@ services:
       - rbox-external-net
     ports:
       - "50051:50051"
+    command: ["/bin/sh", "-c", "while :; do sleep 10; done"]
 
 networks:
   rbox-external-net:
