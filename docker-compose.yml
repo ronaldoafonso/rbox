@@ -6,6 +6,10 @@ services:
     build:
       context: .
     image: rbox:0.0.1
+    volumes:
+      - type: volume
+        source: z3nbox
+        target: /home/rbox/.ssh
     networks:
       - rbox-external-net
     ports:
@@ -23,14 +27,18 @@ services:
       - type: bind
         source: ./rbox/uci
         target: /home/rbox/uci
-      - type: bind
-        source: ./.ssh
+      - type: volume
+        source: z3nbox
         target: /home/rbox/.ssh
     networks:
       - rbox-external-net
     ports:
       - "50051:50051"
     command: ["/bin/sh", "-c", "while :; do sleep 10; done"]
+
+volumes:
+  z3nbox:
+    name: z3nbox
 
 networks:
   rbox-external-net:
