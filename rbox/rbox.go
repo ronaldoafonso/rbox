@@ -9,6 +9,25 @@ type RemoteBox struct {
 	boxname string
 }
 
+func (b *RemoteBox) Scp(script string) error {
+	scp := []string{
+		"/home/rbox/uci/" + script,
+		b.boxname + ":/tmp",
+	}
+	_, err := exec.Command("scp", scp...).Output()
+	return err
+}
+
+func (b *RemoteBox) Ssh(script, param string) error {
+	ssh := []string{
+		b.boxname,
+		"/tmp/" + script,
+		param,
+	}
+	_, err := exec.Command("ssh", ssh...).Output()
+	return err
+}
+
 func (b *RemoteBox) GetConfig() ([]byte, error) {
 	cmd := exec.Command("ssh", b.boxname, "uci show")
 	config, err := cmd.Output()
@@ -38,22 +57,11 @@ func (b *RemoteBox) GetSSIDs() ([]string, error) {
 }
 
 func (b *RemoteBox) SetSSIDs(SSID string) error {
-	scp := []string{
-		"/home/rbox/uci/set_ssid.sh",
-		b.boxname + ":/tmp",
-	}
-	_, err := exec.Command("scp", scp...).Output()
-	if err != nil {
+	if err := b.Scp("set_ssid.sh"); err != nil {
 		return err
 	}
 
-	ssh := []string{
-		b.boxname,
-		"/tmp/set_ssid.sh",
-		SSID,
-	}
-	_, err = exec.Command("ssh", ssh...).Output()
-	return err
+	return b.Ssh("set_ssid.sh", SSID)
 }
 
 func (b *RemoteBox) GetMACs() ([]string, error) {
@@ -67,22 +75,11 @@ func (b *RemoteBox) GetMACs() ([]string, error) {
 }
 
 func (b *RemoteBox) SetMACs(MACs string) error {
-	scp := []string{
-		"/home/rbox/uci/set_ipset_macs.sh",
-		b.boxname + ":/tmp",
-	}
-	_, err := exec.Command("scp", scp...).Output()
-	if err != nil {
+	if err := b.Scp("set_ipset_macs.sh"); err != nil {
 		return err
 	}
 
-	ssh := []string{
-		b.boxname,
-		"/tmp/set_ipset_macs.sh",
-		MACs,
-	}
-	_, err = exec.Command("ssh", ssh...).Output()
-	return err
+	return b.Ssh("set_ipset_macs.sh", MACs)
 }
 
 func NewRBox(boxname string) RemoteBox {

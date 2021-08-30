@@ -14,8 +14,8 @@ func TestNewRBox(t *testing.T) {
 }
 
 func TestRBoxSetSSID(t *testing.T) {
-	boxname := "788a20298f81.z3n.com.br"
-	b := NewRBox(boxname)
+	bnameOK := "788a20298f81.z3n.com.br"
+	b1 := NewRBox(bnameOK)
 
 	tests := []struct {
 		given string
@@ -25,17 +25,23 @@ func TestRBoxSetSSID(t *testing.T) {
 		{"z3n", []string{"z3n", "z3n"}},
 	}
 	for _, test := range tests {
-		err := b.SetSSIDs(test.given)
+		err := b1.SetSSIDs(test.given)
 		if err != nil {
 			t.Fatalf("Error setting SSIDs (%v): %v.", test.given, err)
 		}
 
-		SSIDs, err := b.GetSSIDs()
+		SSIDs, err := b1.GetSSIDs()
 		for i, SSID := range SSIDs {
 			if SSID != test.want[i] {
 				t.Fatalf("Error setting SSID. Want %v, got %v.", test.want[i], SSID)
 			}
 		}
+	}
+
+	bnameNotOK := "notok.z3n.com.br"
+	b2 := NewRBox(bnameNotOK)
+	if err := b2.SetSSIDs("new ssid"); err == nil {
+		t.Fatal("SetSSIDs should return an error.")
 	}
 }
 
@@ -60,8 +66,8 @@ func TestRBoxGetSSIDs(t *testing.T) {
 }
 
 func TestRBoxSetMACs(t *testing.T) {
-	boxname := "788a20298f81.z3n.com.br"
-	b := NewRBox(boxname)
+	bnameOK := "788a20298f81.z3n.com.br"
+	b1 := NewRBox(bnameOK)
 
 	tests := []struct {
 		given string
@@ -72,15 +78,21 @@ func TestRBoxSetMACs(t *testing.T) {
 		{"11:11:11:11:11:11 22:22:22:22:22:22 33:33:33:33:33:33", []string{"11:11:11:11:11:11", "22:22:22:22:22:22", "33:33:33:33:33:33"}},
 	}
 	for _, test := range tests {
-		if err := b.SetMACs(test.given); err != nil {
+		if err := b1.SetMACs(test.given); err != nil {
 			t.Fatalf("Error setting MACs: %v.", err)
 		}
-		MACs, _ := b.GetMACs()
+		MACs, _ := b1.GetMACs()
 		for i, MAC := range MACs {
 			if test.want[i] != MAC {
 				t.Fatalf("Error setting MACs. Want %v, got %v.", test.want[i], MAC)
 			}
 		}
+	}
+
+	bnameNotOK := "notok.z3n.com.br"
+	b2 := NewRBox(bnameNotOK)
+	if err := b2.SetMACs("11:11:11:11:11:11"); err == nil {
+		t.Fatal("SetMACs should return an error.")
 	}
 }
 
