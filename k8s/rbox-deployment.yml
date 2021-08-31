@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rbox
+  namespace: rbox
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rbox
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 120
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: rbox
+    spec:
+      volumes:
+        - name: rbox
+          configMap:
+            name: rbox
+      containers:
+        - name: rbox
+          image: z3nz3n/rbox:0.0.3
+          volumeMounts:
+            - name: rbox
+              mountPath: /home/rbox/.ssh
+          ports:
+          - containerPort: 50051
+          readinessProbe:
+            tcpSocket:
+              port: 50051
+            initialDelaySeconds: 10
+            periodSeconds: 60
