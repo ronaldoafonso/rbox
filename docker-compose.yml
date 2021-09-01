@@ -5,7 +5,7 @@ services:
   rbox:
     build:
       context: .
-    image: rbox:0.0.2
+    image: rbox:0.0.3
     volumes:
       - type: volume
         source: z3nbox
@@ -19,7 +19,7 @@ services:
     build:
       context: .
       target: devel
-    image: rbox-dev:0.0.2
+    image: rbox-dev:0.0.3
     volumes:
       - type: bind
         source: .

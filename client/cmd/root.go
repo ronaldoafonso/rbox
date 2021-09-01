@@ -8,10 +8,12 @@ import (
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&server, "server", "s", "localhost", "rbox server")
+	rootCmd.PersistentFlags().StringVarP(&port, "port", "p", "50051", "rbox server port")
 }
 
 var (
 	server  string
+	port    string
 	field   string
 	value   string
 	rootCmd = &cobra.Command{

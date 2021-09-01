@@ -31,7 +31,8 @@ func get(cmd *cobra.Command, boxnames []string) {
 		go func(boxname string) {
 			var err error
 
-			server += ":50051"
+			server += ":" + port
+			log.Println(server)
 			conn, err := grpc.Dial(server, grpc.WithInsecure(), grpc.WithBlock())
 			if err != nil {
 				log.Fatalf("fail to connect to rbox server: %v.", err)

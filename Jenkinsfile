@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        RBOX_VERSION = '0.0.2'
+        RBOX_VERSION = '0.0.3'
     }
 
     stages {
